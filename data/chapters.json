@@ -1,0 +1,23 @@
+{
+  "maths": [
+    { "id": "arithmetic-sequences", "title": "Arithmetic Sequences", "chapter": 1, "status": "published" },
+    { "id": "circles-and-angles", "title": "Circles and Angles", "chapter": 2, "status": "draft" },
+    { "id": "mathematics-of-chance", "title": "Mathematics of Chance", "chapter": 3, "status": "draft" },
+    { "id": "second-degree-equations", "title": "Second Degree Equations", "chapter": 4, "status": "draft" },
+    { "id": "trigonometry", "title": "Trigonometry", "chapter": 5, "status": "draft" },
+    { "id": "coordinates", "title": "Coordinates", "chapter": 6, "status": "draft" },
+    { "id": "tangents", "title": "Tangents", "chapter": 7, "status": "draft" },
+    { "id": "polynomials-and-equations", "title": "Polynomials and Equations", "chapter": 8, "status": "draft" },
+    { "id": "solids", "title": "Solids", "chapter": 9, "status": "draft" },
+    { "id": "statistics", "title": "Statistics", "chapter": 10, "status": "draft" }
+  ],
+  "physics": [
+    { "id": "coming-soon", "title": "Coming Soon", "chapter": 1, "status": "draft" }
+  ],
+  "chemistry": [
+    { "id": "coming-soon", "title": "Coming Soon", "chapter": 1, "status": "draft" }
+  ],
+  "biology": [
+    { "id": "coming-soon", "title": "Coming Soon", "chapter": 1, "status": "draft" }
+  ]
+}

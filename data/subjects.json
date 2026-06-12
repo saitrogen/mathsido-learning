@@ -1,0 +1,34 @@
+[
+  {
+    "id": "maths",
+    "title": "Mathematics",
+    "grade": 10,
+    "board": "Kerala SCERT",
+    "icon": "📐",
+    "color": "#01696f"
+  },
+  {
+    "id": "physics",
+    "title": "Physics",
+    "grade": 10,
+    "board": "Kerala SCERT",
+    "icon": "⚡",
+    "color": "#006494"
+  },
+  {
+    "id": "chemistry",
+    "title": "Chemistry",
+    "grade": 10,
+    "board": "Kerala SCERT",
+    "icon": "🧪",
+    "color": "#964219"
+  },
+  {
+    "id": "biology",
+    "title": "Biology",
+    "grade": 10,
+    "board": "Kerala SCERT",
+    "icon": "🌿",
+    "color": "#437a22"
+  }
+]
