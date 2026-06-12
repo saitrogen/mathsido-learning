@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arithmetic Sequences — Visual Learning Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FDF8F0; --ink:#2D2A26; --card:#FFFFFF;
+  --pos:#2E6FD8;        /* blue = position */
+  --term:#F08A24;       /* orange = term */
+  --up:#2FA45A;         /* green = +d */
+  --down:#D84B3F;       /* red = -d */
+  --insight:#7B4FC8;    /* purple = answers */
+  --gold:#E8B931;
+  --soft:#F2E9DB;
+  --radius:18px;
+  --shadow:0 6px 18px rgba(45,42,38,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Nunito',sans-serif; background:var(--paper); color:var(--ink);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+h1,h2,h3,.display{font-family:'Baloo 2',cursive}
+
+/* ---------- top bar ---------- */
+header{
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  background:var(--card); box-shadow:var(--shadow); z-index:5;
+}
+header .logo{width:34px;height:34px;border-radius:50%;background:var(--term);
+  position:relative;flex:none}
+header .logo::before,header .logo::after{content:'';position:absolute;top:10px;width:6px;height:8px;border-radius:50%;background:#fff}
+header .logo::before{left:8px}header .logo::after{right:8px}
+header h1{font-size:1.05rem;line-height:1.1}
+header .sec{font-size:.78rem;color:#8a8378;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+header .spacer{flex:1}
+select#jump{font-family:inherit;font-weight:700;font-size:.85rem;padding:6px 10px;
+  border:2px solid var(--soft);border-radius:10px;background:#fff;color:var(--ink);max-width:46vw}
+#progressWrap{height:6px;background:var(--soft)}
+#progress{height:100%;width:0;background:linear-gradient(90deg,var(--term),var(--gold));transition:width .4s}
+
+/* ---------- stage ---------- */
+main{flex:1;position:relative;overflow:hidden}
+.slide{
+  position:absolute; inset:0; padding:22px clamp(14px,4vw,56px) 96px;
+  overflow-y:auto; opacity:0; transform:translateX(40px); pointer-events:none;
+  transition:opacity .35s, transform .35s;
+}
+.slide.active{opacity:1;transform:none;pointer-events:auto}
+.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--insight);margin-bottom:2px}
+.slide h2{font-size:clamp(1.5rem,3.4vw,2.3rem);margin-bottom:6px;line-height:1.12}
+.objective{font-size:.92rem;color:#6f675a;font-style:italic;margin-bottom:16px}
+.say{font-size:1.06rem;max-width:760px;line-height:1.55;margin:14px 0}
+.say b{color:var(--insight)}
+
+/* ---------- step reveal engine ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .55s,transform .55s}
+.step.shown{opacity:1;transform:none}
+.no-motion .step{transition:none}
+
+/* ---------- cards & widgets ---------- */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin:14px 0}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+.center{justify-content:center}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 4px;font-size:.8rem;font-weight:800}
+.legend span{padding:3px 10px;border-radius:999px;color:#fff}
+.lg-pos{background:var(--pos)} .lg-term{background:var(--term)} .lg-up{background:var(--up)} .lg-down{background:var(--down)} .lg-ins{background:var(--insight)}
+
+/* number chips */
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:54px;height:54px;
+  padding:0 12px;border-radius:50%;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;color:#fff;background:var(--term);box-shadow:var(--shadow)}
+.chip.sq{border-radius:12px;background:var(--pos)}
+.chip.ins{background:var(--insight)}
+.chip.ghost{background:#fff;color:#b9b0a2;border:3px dashed #cfc6b6;box-shadow:none}
+.arrowlab{display:inline-flex;flex-direction:column;align-items:center;font-weight:800;color:var(--up);min-width:44px}
+.arrowlab.down{color:var(--down)}
+.arrowlab .a{font-size:1.3rem;line-height:.8}
+
+/* dot rows */
+.dots{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.dot{width:18px;height:18px;border-radius:50%;background:var(--term)}
+.dot.red{background:var(--down)} .dot.new{background:var(--gold)}
+
+/* gap bars */
+.gapbars{display:flex;gap:14px;align-items:flex-end;height:120px;margin:10px 0}
+.gapbar{width:42px;border-radius:8px 8px 4px 4px;background:var(--up);color:#fff;display:flex;align-items:flex-start;justify-content:center;font-weight:800;padding-top:4px}
+.gapbar.bad{background:var(--down)}
+
+/* bar chart / levelling */
+.bars{display:flex;gap:18px;align-items:flex-end;height:190px;position:relative;margin:14px 4px}
+.bar{width:54px;background:var(--term);border-radius:10px 10px 4px 4px;position:relative;display:flex;justify-content:center;color:#fff;font-weight:800;padding-top:6px;transition:height .8s}
+.level{position:absolute;left:-8px;right:-8px;border-top:3px dashed var(--insight);font-size:.75rem;color:var(--insight);font-weight:800}
+
+/* interactive predictions */
+.choices{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.choice{font-family:inherit;font-weight:800;font-size:1.02rem;padding:12px 20px;border-radius:14px;
+  border:3px solid var(--soft);background:#fff;cursor:pointer;transition:.2s}
+.choice:hover{transform:translateY(-2px);border-color:var(--term)}
+.choice.correct{background:var(--up);border-color:var(--up);color:#fff;animation:pop .4s}
+.choice.wrong{background:#fbe3e0;border-color:var(--down);color:var(--down)}
+.choice:disabled{cursor:default;opacity:.85}
+@keyframes pop{50%{transform:scale(1.12)}}
+.feedback{font-weight:800;margin-top:6px;min-height:1.4em}
+.feedback.good{color:var(--up)} .feedback.info{color:var(--insight)}
+
+/* hint / solution accordions */
+details{border:2px solid var(--soft);border-radius:14px;background:#fff;margin:8px 0;overflow:hidden}
+details summary{cursor:pointer;font-weight:800;padding:12px 16px;list-style:none;display:flex;gap:8px;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details[open] summary{border-bottom:2px solid var(--soft)}
+details .body{padding:12px 16px;line-height:1.5}
+details.hint summary{color:var(--gold)} details.sol summary{color:var(--insight)}
+.q{font-weight:800;margin-top:18px;font-size:1.05rem}
+.ws{border:2px dashed #d8cfbf;border-radius:14px;min-height:54px;margin:8px 0;padding:8px 12px;color:#a89e8d;font-size:.85rem;font-style:italic}
+
+/* badge */
+.badge{display:inline-block;background:var(--gold);color:var(--ink);font-family:'Baloo 2';font-weight:800;
+  font-size:1.15rem;padding:12px 22px;border-radius:14px;box-shadow:var(--shadow);transform:rotate(-1.5deg)}
+
+/* svg shared */
+svg text{font-family:'Nunito';font-weight:800}
+svg .baloo{font-family:'Baloo 2'}
+
+/* mindmap */
+.station{display:flex;gap:12px;align-items:center;margin:10px 0;cursor:pointer}
+.station .ic{width:46px;height:46px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex:none;border:3px solid var(--term)}
+.station:hover .ic{background:var(--gold)}
+.station .tx b{display:block}
+.station .tx small{color:#857c6e}
+.rail{border-left:5px solid var(--term);margin-left:23px;padding-left:0}
+
+/* ladder */
+.ladderstep{display:flex;gap:10px;align-items:center;background:#fff;border:3px solid var(--soft);border-radius:14px;padding:12px 16px;margin:8px 0;cursor:pointer;font-weight:700;transition:.25s}
+.ladderstep.done{background:var(--gold);border-color:var(--gold)}
+.ladderstep .tick{width:26px;height:26px;border-radius:50%;border:3px solid #cfc6b6;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
+.ladderstep.done .tick{background:var(--up);border-color:var(--up)}
+
+/* footer nav */
+footer{
+  position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;
+  padding:12px 16px;background:rgba(253,248,240,.92);backdrop-filter:blur(6px);
+  border-top:2px solid var(--soft);z-index:6;
+}
+button.nav{font-family:'Baloo 2';font-weight:800;font-size:1rem;border:none;border-radius:14px;
+  padding:12px 20px;cursor:pointer;box-shadow:var(--shadow)}
+#prevB{background:#fff;color:var(--ink)}
+#stepB{background:var(--term);color:#fff;flex:1;max-width:340px;animation:pulse 1.6s infinite}
+#stepB.exhausted{background:var(--up);animation:none}
+#nextB{background:var(--pos);color:#fff}
+@keyframes pulse{50%{transform:scale(1.03)}}
+.no-motion #stepB{animation:none}
+#counter{font-weight:800;color:#857c6e;font-size:.85rem;margin-left:auto}
+.confetti{position:fixed;width:10px;height:10px;border-radius:2px;z-index:99;pointer-events:none;animation:fall 1.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .step,.slide,.bar{transition:none!important}
+  #stepB,.choice.correct{animation:none!important}
+}
+@media (max-width:640px){
+  .chip{min-width:44px;height:44px;font-size:1.05rem}
+  header h1{font-size:.92rem}
+  .slide{padding-bottom:110px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" title="Dotty"></div>
+  <div><h1>Arithmetic Sequences</h1><div class="sec" id="secLabel">Section 1 · Patterns</div></div>
+  <div class="spacer"></div>
+  <select id="jump" aria-label="Jump to slide"></select>
+</header>
+<div id="progressWrap"><div id="progress"></div></div>
+<main id="stage">
+
+<!-- ============ SECTION 1 ============ -->
+<section class="slide" data-sec="Section 1 · What is a Pattern?">
+  <div class="eyebrow">Welcome</div>
+  <h2>You Already Know Patterns!</h2>
+  <p class="objective">Goal: see that pattern-thinking is something you do every day.</p>
+  <div class="card">
+    <div class="row center" style="gap:22px">
+      <div class="step" style="text-align:center"><div style="font-size:3rem">🦓</div><b>Stripes repeat</b></div>
+      <div class="step" style="text-align:center"><div style="font-size:3rem">🪜</div><b>Stairs grow</b></div>
+      <div class="step" style="text-align:center"><div style="font-size:3rem">📅</div><b>Weeks cycle</b></div>
+      <div class="step" style="text-align:center"><div style="font-size:3rem">🧱</div><b>Tiles tile</b></div>
+    </div>
+  </div>
+  <p class="say step">Before any maths — just look. You spot patterns every day without trying. <b>This whole chapter is simply about patterns made of numbers.</b> No surprises, no traps.</p>
+</section>
+
+<section class="slide" data-sec="Section 1 · What is a Pattern?">
+  <div class="eyebrow">Predict!</div>
+  <h2>The Staircase Game</h2>
+  <p class="objective">Goal: make your very first prediction — and nail it.</p>
+  <div class="card">
+    <svg viewBox="0 0 520 180" width="100%" style="max-width:560px">
+      <g class="step"><rect x="20" y="140" width="34" height="34" rx="5" fill="#F08A24"/><text x="37" y="125" text-anchor="middle" font-size="15">1</text></g>
+      <g class="step"><rect x="80" y="140" width="34" height="34" rx="5" fill="#F08A24"/><rect x="80" y="103" width="34" height="34" rx="5" fill="#F08A24"/><text x="97" y="90" text-anchor="middle" font-size="15">2</text></g>
+      <g class="step"><rect x="140" y="140" width="34" height="34" rx="5" fill="#F08A24"/><rect x="140" y="103" width="34" height="34" rx="5" fill="#F08A24"/><rect x="140" y="66" width="34" height="34" rx="5" fill="#F08A24"/><text x="157" y="53" text-anchor="middle" font-size="15">3</text></g>
+      <g class="step"><rect x="200" y="29" width="34" height="145" rx="5" fill="none" stroke="#cfc6b6" stroke-width="3" stroke-dasharray="7 6"/><text x="217" y="110" text-anchor="middle" font-size="30" fill="#b9b0a2">?</text></g>
+    </svg>
+    <div class="step">
+      <p style="font-weight:800">How many squares will Step 4 need? Tap your guess:</p>
+      <div class="choices" data-correct="4 squares" data-good="Yes! Each step adds exactly one more square. 🎉" data-bad="Now you see it — each step adds just one more square!">
+        <button class="choice">3 squares</button><button class="choice">4 squares</button><button class="choice">5 squares</button>
+      </div>
+      <p class="feedback"></p>
+    </div>
+    <p class="say step">Bonus: how many for Step 5? <b>5 squares</b> — you're already predicting growth. That's the heart of this chapter.</p>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 1 · What is a Pattern?">
+  <div class="eyebrow">From pictures to numbers</div>
+  <h2>Numbers Hiding in Pictures</h2>
+  <p class="objective">Goal: turn a shape pattern into a number pattern — a <b>sequence</b>.</p>
+  <div class="card">
+    <p>Count each staircase step and write the count below it:</p>
+    <div class="row" style="margin:14px 0">
+      <span class="chip step">1</span><span class="chip step">2</span><span class="chip step">3</span><span class="chip step">4</span><span class="chip step">5</span><span class="step" style="font-size:1.6rem;font-weight:800;color:#b9b0a2">…</span>
+    </div>
+    <p class="say step">The picture fades away and a list of numbers remains: <b>1, 2, 3, 4, 5, …</b> An ordered list like this — first, second, third — is called a <b>sequence</b>. The dots mean it continues forever.</p>
+    <div class="step">
+      <p class="q">What number sits under Step 10?</p>
+      <div class="choices" data-correct="10" data-good="Exactly — the count matches the step number here." data-bad="Count the steps: step 10 has 10 squares.">
+        <button class="choice">9</button><button class="choice">10</button><button class="choice">11</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 1 · What is a Pattern?">
+  <div class="eyebrow">Three quick rounds</div>
+  <h2>Prediction Arcade</h2>
+  <p class="objective">Goal: spot how each pattern grows, then predict the next number.</p>
+  <div class="card step">
+    <b>Lane A — dots:</b>
+    <div class="row" style="margin:8px 0"><span class="dots"><span class="dot"></span><span class="dot"></span></span><b>|</b><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><b>|</b><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><b>| ?</b></div>
+    <div class="choices" data-correct="8" data-good="Yes — 2, 4, 6, 8!" data-bad="Count: 2, 4, 6 … each group has 2 more dots → 8.">
+      <button class="choice">7</button><button class="choice">8</button><button class="choice">12</button>
+    </div><p class="feedback"></p>
+  </div>
+  <div class="card step">
+    <b>Lane B — house numbers on one side of a street:</b> 🏠1 🏠3 🏠5 🏠7 🏠<b>?</b>
+    <div class="choices" data-correct="9" data-good="Right — odd numbers, +2 each time." data-bad="The houses skip by 2: next is 9.">
+      <button class="choice">8</button><button class="choice">9</button><button class="choice">10</button>
+    </div><p class="feedback"></p>
+  </div>
+  <div class="card step">
+    <b>Lane C — coin towers:</b> 🪙×5, 🪙×10, 🪙×15, <b>?</b>
+    <div class="choices" data-correct="20" data-good="Yes — towers grow by 5 coins." data-bad="Each tower adds 5 coins → 20.">
+      <button class="choice">18</button><button class="choice">20</button><button class="choice">25</button>
+    </div><p class="feedback"></p>
+  </div>
+  <p class="say step">Dots, houses, coins — different stories, but the <b>same job</b>: spot how it grows, then predict.</p>
+</section>
+
+<section class="slide" data-sec="Section 1 · What is a Pattern?">
+  <div class="eyebrow">From your textbook</div>
+  <h2>Triangle Numbers: A Trickier Pattern</h2>
+  <p class="objective">Goal: meet a pattern whose jumps are <b>not</b> always the same.</p>
+  <div class="card">
+    <svg viewBox="0 0 560 150" width="100%" style="max-width:600px">
+      <g class="step" fill="#D84B3F"><circle cx="40" cy="120" r="8"/><text x="40" y="145" text-anchor="middle" font-size="16" fill="#2D2A26">1</text></g>
+      <g class="step" fill="#D84B3F"><circle cx="120" cy="95" r="8"/><circle cx="105" cy="120" r="8"/><circle cx="135" cy="120" r="8"/><text x="120" y="145" text-anchor="middle" font-size="16" fill="#2D2A26">3</text></g>
+      <g class="step" fill="#D84B3F"><circle cx="230" cy="70" r="8"/><circle cx="215" cy="95" r="8"/><circle cx="245" cy="95" r="8"/><circle cx="200" cy="120" r="8"/><circle cx="230" cy="120" r="8"/><circle cx="260" cy="120" r="8"/><text x="230" y="145" text-anchor="middle" font-size="16" fill="#2D2A26">6</text></g>
+      <g class="step" fill="#D84B3F"><circle cx="370" cy="45" r="8"/><circle cx="355" cy="70" r="8"/><circle cx="385" cy="70" r="8"/><circle cx="340" cy="95" r="8"/><circle cx="370" cy="95" r="8"/><circle cx="400" cy="95" r="8"/><circle cx="325" cy="120" r="8"/><circle cx="355" cy="120" r="8"/><circle cx="385" cy="120" r="8"/><circle cx="415" cy="120" r="8"/><text x="370" y="145" text-anchor="middle" font-size="16" fill="#2D2A26">10</text></g>
+      <g class="step"><text x="495" y="100" text-anchor="middle" font-size="34" fill="#b9b0a2">?</text></g>
+    </svg>
+    <div class="step">
+      <p class="q">Each triangle adds one more bottom row. How many dots in the 5th triangle?</p>
+      <div class="choices" data-correct="15" data-good="Yes! 10 + a new row of 5 = 15." data-bad="A new bottom row of 5 dots is added: 10 + 5 = 15.">
+        <button class="choice">12</button><button class="choice">14</button><button class="choice">15</button>
+      </div><p class="feedback"></p>
+    </div>
+    <div class="row step" style="align-items:center">
+      <span class="chip">1</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip">3</span><span class="arrowlab"><span class="a">⌒</span>+3</span>
+      <span class="chip">6</span><span class="arrowlab"><span class="a">⌒</span>+4</span>
+      <span class="chip">10</span><span class="arrowlab"><span class="a">⌒</span>+5</span>
+      <span class="chip ins">15</span>
+    </div>
+    <p class="say step">Watch the jumps: +2, +3, +4, +5 — <b>the jump itself keeps growing!</b> Interesting… do some patterns grow by the <b>same</b> amount every time? Let's find out.</p>
+  </div>
+</section>
+
+<!-- ============ SECTION 2 ============ -->
+<section class="slide" data-sec="Section 2 · Discovering Arithmetic Sequences">
+  <div class="eyebrow">Discover it yourself</div>
+  <h2>The Steady Grower</h2>
+  <p class="objective">Goal: discover that some sequences grow by a constant amount.</p>
+  <div class="card">
+    <div class="row" style="gap:40px">
+      <div class="step"><b>🐢 Tortoise:</b><div class="row" style="margin-top:8px"><span class="chip">2</span><span class="chip">4</span><span class="chip">6</span><span class="chip">8</span></div></div>
+      <div class="step"><b>🐇 Hare (triangles):</b><div class="row" style="margin-top:8px"><span class="chip">1</span><span class="chip">3</span><span class="chip">6</span><span class="chip">10</span></div></div>
+    </div>
+    <div class="step">
+      <p class="q">One of these grows the SAME way every time. Which?</p>
+      <div class="choices" data-correct="🐢 Tortoise" data-good="You discovered it: +2, +2, +2 — identical steps!" data-bad="Check the hare: +2, +3, +4 — the steps stretch. The tortoise takes equal steps: +2, +2, +2.">
+        <button class="choice">🐢 Tortoise</button><button class="choice">🐇 Hare</button>
+      </div><p class="feedback"></p>
+    </div>
+    <div class="row step" style="align-items:center">
+      <span class="chip">2</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip">4</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip">6</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip">8</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip ins">10</span><span class="arrowlab"><span class="a">⌒</span>+2</span>
+      <span class="chip ins">12</span>
+    </div>
+    <p class="say step">Identical green arcs — they would stack on top of each other perfectly. <b>Steady, equal steps. That's special.</b></p>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 2 · Discovering Arithmetic Sequences">
+  <div class="eyebrow">Naming your discovery</div>
+  <h2>Arithmetic Sequence</h2>
+  <p class="objective">Goal: attach the official name to the idea you just found.</p>
+  <div style="text-align:center;margin:10px 0" class="step"><span class="badge">ARITHMETIC SEQUENCE = start at a number, keep adding the SAME number</span></div>
+  <div class="card step">
+    <table style="width:100%;border-collapse:collapse;font-size:1rem">
+      <tr style="font-weight:800;color:#857c6e"><td>Start at</td><td>Keep adding</td><td>Sequence</td></tr>
+      <tr class="step"><td><b>2</b></td><td style="color:var(--up);font-weight:800">+2</td><td>2, 4, 6, …</td></tr>
+      <tr class="step"><td><b>1</b></td><td style="color:var(--up);font-weight:800">+2</td><td>1, 3, 5, …</td></tr>
+      <tr class="step"><td><b>95</b></td><td style="color:var(--down);font-weight:800">−5</td><td>95, 90, 85, … <small>(downhill counts!)</small></td></tr>
+      <tr class="step"><td><b>360</b></td><td style="color:#857c6e;font-weight:800">+0</td><td>360, 360, 360, … <small>(adding zero still counts!)</small></td></tr>
+    </table>
+  </div>
+  <div class="card step">
+    <p class="q">Start at 7, keep adding 3. The first four terms?</p>
+    <div class="choices" data-correct="7, 10, 13, 16" data-good="Perfect hops of +3." data-bad="Hop +3 each time: 7 → 10 → 13 → 16.">
+      <button class="choice">7, 10, 13, 16</button><button class="choice">7, 9, 11, 13</button><button class="choice">3, 7, 10, 13</button>
+    </div><p class="feedback"></p>
+  </div>
+  <p class="say step">You found the rule yourself; this is just its name. The step can be <b>positive, negative, or zero</b>.</p>
+</section>
+
+<section class="slide" data-sec="Section 2 · Discovering Arithmetic Sequences">
+  <div class="eyebrow">Vocabulary, visually</div>
+  <h2>Terms: Giving Each Number a Seat</h2>
+  <p class="objective">Goal: learn “term” and “position” — and never mix them up.</p>
+  <div class="card">
+    <div class="legend"><span class="lg-pos">BLUE = position (the seat)</span><span class="lg-term">ORANGE = term (the sitter)</span></div>
+    <div class="row" style="gap:22px;margin-top:12px">
+      <div class="step" style="text-align:center"><span class="chip">10</span><br><span class="chip sq" style="min-width:38px;height:38px;font-size:1rem;margin-top:6px">1</span></div>
+      <div class="step" style="text-align:center"><span class="chip">13</span><br><span class="chip sq" style="min-width:38px;height:38px;font-size:1rem;margin-top:6px">2</span></div>
+      <div class="step" style="text-align:center"><span class="chip">16</span><br><span class="chip sq" style="min-width:38px;height:38px;font-size:1rem;margin-top:6px">3</span></div>
+      <div class="step" style="text-align:center"><span class="chip">19</span><br><span class="chip sq" style="min-width:38px;height:38px;font-size:1rem;margin-top:6px">4</span></div>
+      <div class="step" style="text-align:center"><span class="chip">22</span><br><span class="chip sq" style="min-width:38px;height:38px;font-size:1rem;margin-top:6px">5</span></div>
+    </div>
+    <p class="say step">Each number in a sequence is a <b>term</b>, and each term has a seat number — its <b>position</b>. “The 2nd term is 13” = the sitter in seat 2 is 13.</p>
+    <div class="step">
+      <p class="q">Who sits in seat 4?</p>
+      <div class="choices" data-correct="19" data-good="Seat 4 → term 19. 👋" data-bad="Find blue seat 4: the orange sitter above it is 19.">
+        <button class="choice">16</button><button class="choice">19</button><button class="choice">4</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3 ============ -->
+<section class="slide" data-sec="Section 3 · Common Difference">
+  <div class="eyebrow">The jump gets a name</div>
+  <h2>The Jump Size: Common Difference</h2>
+  <p class="objective">Goal: define the common difference d and learn how to find it.</p>
+  <div class="card">
+    <svg viewBox="0 0 560 120" width="100%" style="max-width:600px">
+      <line x1="20" y1="95" x2="540" y2="95" stroke="#cfc6b6" stroke-width="3"/>
+      <g class="step"><circle cx="80" cy="95" r="6" fill="#F08A24"/><text x="80" y="118" text-anchor="middle" font-size="16">2</text></g>
+      <g class="step"><path d="M85 90 Q140 35 195 90" fill="none" stroke="#2FA45A" stroke-width="4"/><text x="140" y="45" text-anchor="middle" fill="#2FA45A" font-size="15">+2</text><circle cx="200" cy="95" r="6" fill="#F08A24"/><text x="200" y="118" text-anchor="middle" font-size="16">4</text></g>
+      <g class="step"><path d="M205 90 Q260 35 315 90" fill="none" stroke="#2FA45A" stroke-width="4"/><text x="260" y="45" text-anchor="middle" fill="#2FA45A" font-size="15">+2</text><circle cx="320" cy="95" r="6" fill="#F08A24"/><text x="320" y="118" text-anchor="middle" font-size="16">6</text></g>
+      <g class="step"><path d="M325 90 Q380 35 435 90" fill="none" stroke="#2FA45A" stroke-width="4"/><text x="380" y="45" text-anchor="middle" fill="#2FA45A" font-size="15">+2</text><circle cx="440" cy="95" r="6" fill="#F08A24"/><text x="440" y="118" text-anchor="middle" font-size="16">8</text></g>
+      <g class="step"><text x="490" y="100" font-size="22">🐸</text></g>
+    </svg>
+    <p class="say step">The frog's jumps are all the <b>same size</b>. That size is the <b>common difference, d</b>.</p>
+    <div class="step" style="text-align:center"><span class="badge">d = any term − the term before it</span></div>
+    <p class="say step">Check it anywhere: 4 − 2 = 2 &nbsp;·&nbsp; 6 − 4 = 2 &nbsp;·&nbsp; 8 − 6 = 2. Same answer every time. Here <b>d = +2</b>.</p>
+    <div class="step">
+      <p class="q">Find d for 3, 7, 11, 15.</p>
+      <div class="choices" data-correct="4" data-good="Yes: 7 − 3 = 4 (and every other gap agrees)." data-bad="Subtract neighbours: 7 − 3 = 4.">
+        <button class="choice">3</button><button class="choice">4</button><button class="choice">8</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 3 · Common Difference">
+  <div class="eyebrow">Downhill jumps</div>
+  <h2>Negative Common Difference</h2>
+  <p class="objective">Goal: get comfortable with decreasing sequences and negative d.</p>
+  <div class="card">
+    <svg viewBox="0 0 560 170" width="100%" style="max-width:600px">
+      <g class="step"><rect x="30" y="30" width="90" height="130" fill="#F2E9DB" rx="6"/><text x="75" y="22" text-anchor="middle" font-size="17">10</text></g>
+      <g class="step"><path d="M120 40 Q160 25 195 70" fill="none" stroke="#D84B3F" stroke-width="4"/><text x="160" y="30" text-anchor="middle" fill="#D84B3F" font-size="15">−3</text><rect x="160" y="69" width="90" height="91" fill="#F2E9DB" rx="6"/><text x="205" y="62" text-anchor="middle" font-size="17">7</text></g>
+      <g class="step"><path d="M250 79 Q290 64 325 109" fill="none" stroke="#D84B3F" stroke-width="4"/><text x="290" y="69" text-anchor="middle" fill="#D84B3F" font-size="15">−3</text><rect x="290" y="108" width="90" height="52" fill="#F2E9DB" rx="6"/><text x="335" y="101" text-anchor="middle" font-size="17">4</text></g>
+      <g class="step"><path d="M380 118 Q420 103 455 148" fill="none" stroke="#D84B3F" stroke-width="4"/><text x="420" y="108" text-anchor="middle" fill="#D84B3F" font-size="15">−3</text><rect x="420" y="147" width="90" height="13" fill="#F2E9DB" rx="4"/><text x="465" y="140" text-anchor="middle" font-size="17">1</text></g>
+    </svg>
+    <p class="say step">Subtract the same safe way — <b>later term minus earlier term</b>: 7 − 10 = <b>−3</b>. The minus sign just means “downhill”. And the stairs keep going: next comes 1 − 3 = <b>−2</b>, below zero!</p>
+    <div class="step">
+      <p class="q">100, 95, 90, … — what is d, and what's the next term?</p>
+      <div class="choices" data-correct="d = −5, next is 85" data-good="Downhill by 5 each step." data-bad="95 − 100 = −5, so the next term is 90 − 5 = 85.">
+        <button class="choice">d = 5, next is 95</button><button class="choice">d = −5, next is 85</button><button class="choice">d = −5, next is 80</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4 ============ -->
+<section class="slide" data-sec="Section 4 · Identifying Arithmetic Sequences">
+  <div class="eyebrow">Be the detective 🔍</div>
+  <h2>The Jump Inspector</h2>
+  <p class="objective">Goal: test a sequence by measuring ALL the gaps.</p>
+
+  <div class="card step">
+    <b>Case 1: 1, 4, 7, 10</b>
+    <div class="choices" data-correct="Arithmetic ✓" data-good="Gaps 3, 3, 3 — all equal. d = 3." data-bad="Measure: 4−1=3, 7−4=3, 10−7=3 → equal gaps → arithmetic!">
+      <button class="choice">Arithmetic ✓</button><button class="choice">Not arithmetic ✗</button>
+    </div><p class="feedback"></p>
+    <div class="gapbars step"><div class="gapbar" style="height:60px">3</div><div class="gapbar" style="height:60px">3</div><div class="gapbar" style="height:60px">3</div></div>
+  </div>
+
+  <div class="card step">
+    <b>Case 2: 2, 3, 5, 6</b>
+    <div class="choices" data-correct="Not arithmetic ✗" data-good="Gaps 1, 2, 1 — one unequal gap ruins it." data-bad="Measure every gap: 1, 2, 1. They differ → not arithmetic.">
+      <button class="choice">Arithmetic ✓</button><button class="choice">Not arithmetic ✗</button>
+    </div><p class="feedback"></p>
+    <div class="gapbars step" style="height:90px"><div class="gapbar bad" style="height:28px">1</div><div class="gapbar bad" style="height:56px">2</div><div class="gapbar bad" style="height:28px">1</div></div>
+  </div>
+
+  <div class="card step">
+    <b>Case 3: 1, 4, 9, 16 (the squares)</b>
+    <div class="choices" data-correct="Not arithmetic ✗" data-good="Gaps 3, 5, 7 — they keep growing." data-bad="Gaps are 3, 5, 7 — growing, not equal.">
+      <button class="choice">Arithmetic ✓</button><button class="choice">Not arithmetic ✗</button>
+    </div><p class="feedback"></p>
+  </div>
+
+  <div class="card step">
+    <b>Case 4 (twist!): 8, 8, 8, 8</b>
+    <div class="choices" data-correct="Arithmetic ✓" data-good="Surprise — gaps are 0, 0, 0. Equal! d = 0 counts." data-bad="Gaps are 0, 0, 0 — all equal, so YES, with d = 0.">
+      <button class="choice">Arithmetic ✓</button><button class="choice">Not arithmetic ✗</button>
+    </div><p class="feedback"></p>
+  </div>
+  <p class="say step"><b>Don't guess from the first gap — inspect EVERY gap.</b> One unequal gap ruins it; equal gaps (even zero) pass.</p>
+</section>
+
+<section class="slide" data-sec="Section 4 · Identifying Arithmetic Sequences">
+  <div class="eyebrow">⚠️ Warning sign</div>
+  <h2>A Few Terms Can Lie</h2>
+  <p class="objective">Goal: understand why 3, 5, 7, … isn't automatically arithmetic.</p>
+  <div class="card">
+    <svg viewBox="0 0 560 180" width="100%" style="max-width:600px">
+      <path d="M30 160 L250 160" stroke="#cfc6b6" stroke-width="14" stroke-linecap="round"/>
+      <g class="step"><path d="M250 160 L470 80" stroke="#cfc6b6" stroke-width="14" stroke-linecap="round"/><text x="480" y="70" font-size="15" fill="#2FA45A">odd numbers → next is 9</text></g>
+      <g class="step"><path d="M250 160 L470 165" stroke="#cfc6b6" stroke-width="14" stroke-linecap="round"/><text x="480" y="170" font-size="15" fill="#7B4FC8">prime numbers → next is 11</text></g>
+      <text x="60" y="140" font-size="20" class="baloo">3, 5, 7 …</text>
+      <g class="step"><text x="235" y="125" font-size="26">🤷</text></g>
+    </svg>
+    <p class="say step">The same three numbers have <b>two different futures</b>. If the rule is “odd numbers”, next is 9. If it's “prime numbers”, next is 11. <b>Three numbers alone can't promise the future</b> — we must be told the rule (or told “this is arithmetic”). Then, and only then, can we predict.</p>
+    <details class="hint step"><summary>💬 Try it: give 1, 2, 4 two different futures</summary><div class="body">Doubling rule → next is <b>8</b>. Or jumps +1, +2, +3 → next is <b>7</b>. Same start, different stories!</div></details>
+  </div>
+</section>
+
+<!-- ============ SECTION 5 ============ -->
+<section class="slide" data-sec="Section 5 · Missing Terms">
+  <div class="eyebrow">Number-box puzzle 1</div>
+  <h2>The Middle Mystery</h2>
+  <p class="objective">Goal: find a missing middle term using two equal jumps.</p>
+  <div class="card">
+    <div class="row center step"><span class="chip">24</span><span class="chip ghost">?</span><span class="chip">42</span></div>
+    <div class="step" style="text-align:center;margin:10px 0"><span style="color:var(--up);font-weight:800;font-size:1.05rem">whole trip: 42 − 24 = +18 … covered by TWO equal jumps</span></div>
+    <div class="step" style="text-align:center"><span class="badge">18 ÷ 2 = 9 per jump</span></div>
+    <div class="row center step" style="margin-top:14px;align-items:center">
+      <span class="chip">24</span><span class="arrowlab"><span class="a">⌒</span>+9</span><span class="chip ins">33</span><span class="arrowlab"><span class="a">⌒</span>+9</span><span class="chip">42</span>
+    </div>
+    <p class="say step">Check: 24 + 9 = 33, and 33 + 9 = 42 ✓. <b>Total change ÷ number of jumps = one jump.</b></p>
+    <div class="step">
+      <p class="q">[10] [□] [30] — fill the box.</p>
+      <div class="choices" data-correct="20" data-good="Trip of 20, two jumps of 10 each." data-bad="30 − 10 = 20, split into two jumps of 10 → middle is 20.">
+        <button class="choice">15</button><button class="choice">20</button><button class="choice">25</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 5 · Missing Terms">
+  <div class="eyebrow">Number-box puzzles 2 &amp; 3</div>
+  <h2>Before and Beyond</h2>
+  <p class="objective">Goal: apply jump logic backwards, and with two gaps.</p>
+  <div class="card step">
+    <b>Puzzle A:</b> <span class="chip ghost" style="min-width:44px;height:44px">?</span> <span class="chip" style="min-width:44px;height:44px">24</span> <span class="chip" style="min-width:44px;height:44px">42</span>
+    <p class="say">Anchor on the gap you fully know: 24 → 42 is <b>+18</b>, so d = 18. Now walk <b>backwards</b> one jump:</p>
+    <div class="step" style="text-align:center"><span class="badge">24 − 18 = 6</span></div>
+  </div>
+  <div class="card step">
+    <b>Puzzle B:</b> <span class="chip" style="min-width:44px;height:44px">24</span> <span class="chip ghost" style="min-width:44px;height:44px">?</span> <span class="chip ghost" style="min-width:44px;height:44px">?</span> <span class="chip" style="min-width:44px;height:44px">42</span>
+    <p class="say">Trip of 18 covered by <b>THREE</b> jumps → 18 ÷ 3 = 6 each:</p>
+    <div class="row step" style="align-items:center"><span class="chip">24</span><span class="arrowlab"><span class="a">⌒</span>+6</span><span class="chip ins">30</span><span class="arrowlab"><span class="a">⌒</span>+6</span><span class="chip ins">36</span><span class="arrowlab"><span class="a">⌒</span>+6</span><span class="chip">42</span></div>
+  </div>
+  <div class="card step">
+    <p class="q">Tricky: [□] [□] [24] [42] — what are the two missing boxes?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">The only gap you fully know is 24 → 42 (neighbours!). So d = 18 here.</div></details>
+    <div class="choices" data-correct="−12 and 6" data-good="d = 18, walk back: 24−18 = 6, then 6−18 = −12." data-bad="d = 18 (from 24→42). Walk backwards: 24 − 18 = 6, then 6 − 18 = −12.">
+      <button class="choice">−12 and 6</button><button class="choice">6 and 12</button><button class="choice">0 and 12</button>
+    </div><p class="feedback"></p>
+  </div>
+  <p class="say step"><b>Recipe:</b> ① anchor on a fully-known gap ② count the jumps between known boxes ③ divide, then walk.</p>
+</section>
+
+<!-- ============ SECTION 6 ============ -->
+<section class="slide" data-sec="Section 6 · Position and Term">
+  <div class="eyebrow">The two-row machine 🎰</div>
+  <h2>Position and Term, Locked Together</h2>
+  <p class="objective">Goal: read a position–term table and see the rows move in lockstep.</p>
+  <div class="card">
+    <div class="legend"><span class="lg-pos">positions</span><span class="lg-term">terms</span></div>
+    <div class="row step" style="gap:10px;margin:10px 0"><span class="chip sq">1</span><span class="chip sq">2</span><span class="chip sq">3</span><span class="chip sq">4</span><span class="chip sq">5</span></div>
+    <div class="row step" style="gap:10px"><span class="chip">5</span><span class="chip">15</span><span class="chip">25</span><span class="chip">35</span><span class="chip">45</span></div>
+    <div class="step" style="margin:14px 0;text-align:center"><span class="badge">position +1 ⟶ term +10</span></div>
+    <p class="say step">Two rows, locked together: every time the position takes one step, the term takes one jump of 10. Press a button, the display answers.</p>
+    <div class="step">
+      <p class="q">Press button 6 — predict the display.</p>
+      <div class="choices" data-correct="55" data-good="45 + 10 = 55. Ka-ching!" data-bad="One more position step = one more +10: 45 + 10 = 55.">
+        <button class="choice">50</button><button class="choice">55</button><button class="choice">65</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 6 · Position and Term">
+  <div class="eyebrow">The golden rule</div>
+  <h2>Double Steps, Double Jumps</h2>
+  <p class="objective">Goal: discover that term change = position change × d.</p>
+  <div class="card">
+    <p class="step">Same machine (5, 15, 25, …). Now skip seats:</p>
+    <table class="step" style="border-collapse:collapse;margin:10px 0;font-size:1.05rem">
+      <tr style="font-weight:800;color:#857c6e"><td style="padding:4px 18px 4px 0">Position change</td><td>Term change</td></tr>
+      <tr class="step"><td style="color:var(--pos);font-weight:800">+1</td><td style="color:var(--up);font-weight:800">+10</td></tr>
+      <tr class="step"><td style="color:var(--pos);font-weight:800">+2</td><td style="color:var(--up);font-weight:800">+20</td></tr>
+      <tr class="step"><td style="color:var(--pos);font-weight:800">+3</td><td style="color:var(--up);font-weight:800">+30</td></tr>
+      <tr class="step"><td style="color:var(--pos);font-weight:800">−2 (backwards!)</td><td style="color:var(--down);font-weight:800">−20</td></tr>
+    </table>
+    <div class="step" style="text-align:center;margin:12px 0"><span class="badge">term change = position change × d</span></div>
+    <p class="say step">Skip 2 seats? The term jumps two jumps' worth. Go backwards? It drops the same way. <b>You never need to walk one step at a time — you can multiply.</b></p>
+    <div class="step">
+      <p class="q">Position jumps +5 in this machine. The term jumps…?</p>
+      <div class="choices" data-correct="+50" data-good="5 × 10 = 50. The golden rule!" data-bad="5 position steps × d(=10) = +50.">
+        <button class="choice">+15</button><button class="choice">+50</button><button class="choice">+5</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 6 · Position and Term">
+  <div class="eyebrow">Downhill setting</div>
+  <h2>The Machine, Downhill</h2>
+  <p class="objective">Goal: use the lockstep rule on a decreasing sequence.</p>
+  <div class="card">
+    <div class="row step" style="gap:8px"><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">1</span><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">2</span><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">3</span><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">4</span><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">5</span><span style="font-weight:800;color:#b9b0a2">…</span><span class="chip sq" style="min-width:42px;height:42px;font-size:1rem">9</span></div>
+    <div class="row step" style="gap:8px;margin-top:8px"><span class="chip" style="min-width:42px;height:42px;font-size:1rem">50</span><span class="chip" style="min-width:42px;height:42px;font-size:1rem">45</span><span class="chip" style="min-width:42px;height:42px;font-size:1rem">40</span><span class="chip" style="min-width:42px;height:42px;font-size:1rem">35</span><span class="chip" style="min-width:42px;height:42px;font-size:1rem">30</span><span style="font-weight:800;color:#b9b0a2">…</span><span class="chip" style="min-width:42px;height:42px;font-size:1rem">10</span></div>
+    <p class="say step">Same lockstep, but each position step <b>costs 5</b>: d = −5. Position +2 → term −10. Position −3 → term <b>+15</b> (backing up on a downhill line means going up!).</p>
+    <div class="step">
+      <p class="q">From position 4 to position 9, the term changes by…?</p>
+      <div class="choices" data-correct="−25" data-good="5 steps × (−5) = −25. Check: 35 → 10 ✓" data-bad="Position change = 9 − 4 = 5 steps; 5 × (−5) = −25 (35 drops to 10).">
+        <button class="choice">−5</button><button class="choice">−25</button><button class="choice">+25</button>
+      </div><p class="feedback"></p>
+    </div>
+    <p class="say step">The multiply rule works for negative d too — <b>sign and all</b>.</p>
+  </div>
+</section>
+
+<!-- ============ SECTION 7 ============ -->
+<section class="slide" data-sec="Section 7 · Finding Unknown Terms">
+  <div class="eyebrow">The journey map 🚂</div>
+  <h2>3rd Term is 12, 7th is 32 — Find the 15th</h2>
+  <p class="objective">Goal: solve a two-known-terms problem as a number-line journey.</p>
+  <div class="card">
+    <svg viewBox="0 0 600 190" width="100%" style="max-width:640px">
+      <line x1="20" y1="140" x2="580" y2="140" stroke="#cfc6b6" stroke-width="6"/>
+      <g><circle cx="100" cy="140" r="9" fill="#2E6FD8"/><text x="100" y="168" text-anchor="middle" font-size="15" fill="#2E6FD8">pos 3</text><text x="100" y="115" text-anchor="middle" font-size="18" fill="#F08A24" class="baloo">12</text></g>
+      <g><circle cx="280" cy="140" r="9" fill="#2E6FD8"/><text x="280" y="168" text-anchor="middle" font-size="15" fill="#2E6FD8">pos 7</text><text x="280" y="115" text-anchor="middle" font-size="18" fill="#F08A24" class="baloo">32</text></g>
+      <g><circle cx="540" cy="140" r="9" fill="#2E6FD8"/><text x="540" y="168" text-anchor="middle" font-size="15" fill="#2E6FD8">pos 15</text><text x="540" y="115" text-anchor="middle" font-size="20" fill="#7B4FC8" class="baloo" id="flag15">?</text></g>
+      <g class="step"><path d="M105 132 Q190 70 275 132" fill="none" stroke="#2FA45A" stroke-width="4"/><text x="190" y="80" text-anchor="middle" fill="#2FA45A" font-size="14">4 stations · climb +20</text></g>
+      <g class="step"><rect x="120" y="8" width="150" height="30" rx="9" fill="#E8B931"/><text x="195" y="29" text-anchor="middle" font-size="15">20 ÷ 4 = +5 / station</text></g>
+      <g class="step"><path d="M285 132 Q412 55 535 132" fill="none" stroke="#7B4FC8" stroke-width="4"/><text x="412" y="68" text-anchor="middle" fill="#7B4FC8" font-size="14">8 stations × 5 = +40</text></g>
+    </svg>
+    <div class="step">
+      <p class="q">So the 15th term is…</p>
+      <div class="choices" data-correct="72" data-good="32 + 40 = 72. Arrival! 🔔" data-bad="Ride 8 stations past 32, climbing 5 each: 32 + 40 = 72.">
+        <button class="choice">52</button><button class="choice">72</button><button class="choice">92</button>
+      </div><p class="feedback"></p>
+    </div>
+    <p class="say step"><b>Two flags tell us everything:</b> the trip 3 → 7 took 4 stations and climbed 20, so each station climbs 5. Then ride anywhere. (Quick try: the 5th term = 12 + 2×5 = <b>22</b>.)</p>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 7 · Finding Unknown Terms">
+  <div class="eyebrow">Journey map, downhill</div>
+  <h2>4th Term is 81, 6th is 71 — Find the 20th</h2>
+  <p class="objective">Goal: the same journey method on a decreasing sequence (textbook example).</p>
+  <div class="card">
+    <p class="step"><b>Measure the known trip:</b> 4 → 6 is <span style="color:var(--pos);font-weight:800">2 stations</span>; 81 → 71 is <span style="color:var(--down);font-weight:800">−10</span>. So each station drops <b>−5</b>.</p>
+    <p class="step"><b>Now travel:</b> 6 → 20 is 14 stations → 14 × (−5) = <span style="color:var(--down);font-weight:800">−70</span>.</p>
+    <div class="step">
+      <p class="q">The 20th term is…</p>
+      <div class="choices" data-correct="1" data-good="71 − 70 = 1. Almost at the valley floor!" data-bad="71 − 70 = 1.">
+        <button class="choice">141</button><button class="choice">1</button><button class="choice">−1</button>
+      </div><p class="feedback"></p>
+    </div>
+    <div class="step">
+      <p class="q">Backwards bonus: find the <b>1st</b> term of this sequence.</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">Going BACK 3 stations on a downhill line means going UP: undo −5 three times.</div></details>
+      <div class="choices" data-correct="96" data-good="81 + 3×5 = 96. Backwards on a downhill line goes up!" data-bad="3 stations back from pos 4: undo −5 three times → 81 + 15 = 96.">
+        <button class="choice">66</button><button class="choice">96</button><button class="choice">86</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 7 · Finding Unknown Terms">
+  <div class="eyebrow">Membership test 🎈</div>
+  <h2>Is 1000 on This Train Line?</h2>
+  <p class="objective">Goal: test whether a number is a term of 19, 28, 37, …</p>
+  <div class="card">
+    <p class="say step">Every flag on this line is <b>19 + a stack of 9-blocks</b>. A balloon labelled <b>1000</b> floats above — is there a station under it?</p>
+    <p class="step" style="font-size:1.1rem"><b>Climb needed:</b> 1000 − 19 = 981. <b>Stack check:</b> 981 ÷ 9 = <span style="color:var(--up);font-weight:800">109, no leftover!</span></p>
+    <div class="step" style="text-align:center"><span class="badge">✓ 1000 IS a term — station 110</span></div>
+    <p class="say step">(109 jumps after station 1 lands you at position 110.) Contrast: balloon “1005” → 986 ÷ 9 leaves leftover blocks sticking out → <span style="color:var(--down);font-weight:800">✗ not a term</span>.</p>
+    <div class="step">
+      <p class="q">Is 100 a term of 12, 23, 34, …?</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">d = 11. Divide the climb (100 − 12) by 11 and check the remainder.</div></details>
+      <div class="choices" data-correct="Yes — the 9th term" data-good="88 ÷ 11 = 8 exactly → 8 jumps after position 1 → 9th term." data-bad="100 − 12 = 88, and 88 ÷ 11 = 8 with no remainder → yes, the 9th term.">
+        <button class="choice">Yes — the 9th term</button><button class="choice">No</button><button class="choice">Yes — the 8th term</button>
+      </div><p class="feedback"></p>
+    </div>
+    <p class="say step"><b>Membership test = divide the gap by d and check for remainder 0.</b></p>
+  </div>
+</section>
+
+<!-- ============ SECTION 8 ============ -->
+<section class="slide" data-sec="Section 8 · Sequences in Geometry">
+  <div class="eyebrow">Geometry builds sequences</div>
+  <h2>The Polygon Angle Ladder</h2>
+  <p class="objective">Goal: see 180, 360, 540, … as arithmetic — and why.</p>
+  <div class="card">
+    <svg viewBox="0 0 600 170" width="100%" style="max-width:640px">
+      <g class="step"><polygon points="60,110 110,110 85,60" fill="none" stroke="#2E6FD8" stroke-width="3"/><text x="85" y="140" text-anchor="middle" font-size="16" fill="#F08A24" class="baloo">180°</text><text x="85" y="160" text-anchor="middle" font-size="12">1 triangle</text></g>
+      <g class="step"><polygon points="170,110 240,110 240,55 170,55" fill="none" stroke="#2E6FD8" stroke-width="3"/><line x1="170" y1="110" x2="240" y2="55" stroke="#2FA45A" stroke-width="2" stroke-dasharray="5 4"/><text x="205" y="140" text-anchor="middle" font-size="16" fill="#F08A24" class="baloo">360°</text><text x="205" y="160" text-anchor="middle" font-size="12">2 triangles</text></g>
+      <g class="step"><polygon points="310,110 380,110 395,65 345,38 295,65" fill="none" stroke="#2E6FD8" stroke-width="3"/><line x1="310" y1="110" x2="395" y2="65" stroke="#2FA45A" stroke-width="2" stroke-dasharray="5 4"/><line x1="310" y1="110" x2="345" y2="38" stroke="#2FA45A" stroke-width="2" stroke-dasharray="5 4"/><text x="345" y="140" text-anchor="middle" font-size="16" fill="#F08A24" class="baloo">540°</text><text x="345" y="160" text-anchor="middle" font-size="12">3 triangles</text></g>
+      <g class="step"><text x="480" y="95" text-anchor="middle" font-size="15" fill="#2FA45A">+180° per extra<tspan x="480" dy="18">triangle slice</tspan></text></g>
+    </svg>
+    <p class="say step">Each new shape hides exactly <b>one more triangle</b> than the last, and every triangle is worth a 180° token. One more triangle = +180°. <b>Geometry built us an arithmetic sequence:</b> 180, 360, 540, 720, … with d = 180.</p>
+    <div class="step">
+      <p class="q">Angle sum for a 10-sided shape?</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">A 10-sided shape slices into 8 triangles (always sides − 2).</div></details>
+      <div class="choices" data-correct="1440°" data-good="8 triangles × 180° = 1440°." data-bad="10 − 2 = 8 triangles → 8 × 180 = 1440°.">
+        <button class="choice">1440°</button><button class="choice">1800°</button><button class="choice">1260°</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 8 · Sequences in Geometry">
+  <div class="eyebrow">Textbook problem, animated</div>
+  <h2>The Perpendicular Staircase</h2>
+  <p class="objective">Goal: see why equally spaced posts under a slanted line form an arithmetic sequence.</p>
+  <div class="card">
+    <svg viewBox="0 0 600 200" width="100%" style="max-width:640px">
+      <line x1="30" y1="175" x2="570" y2="175" stroke="#2D2A26" stroke-width="3"/>
+      <line x1="30" y1="175" x2="570" y2="35" stroke="#2E6FD8" stroke-width="3"/>
+      <g stroke="#D84B3F" stroke-width="5">
+        <line x1="120" y1="175" x2="120" y2="152"/><line x1="210" y1="175" x2="210" y2="129"/><line x1="300" y1="175" x2="300" y2="105"/><line x1="390" y1="175" x2="390" y2="82"/><line x1="480" y1="175" x2="480" y2="59"/>
+      </g>
+      <g class="step" stroke="#2FA45A" stroke-width="2" stroke-dasharray="6 4">
+        <line x1="120" y1="152" x2="210" y2="152"/><line x1="210" y1="129" x2="300" y2="129"/><line x1="300" y1="105" x2="390" y2="105"/><line x1="390" y1="82" x2="480" y2="82"/>
+      </g>
+      <g class="step"><text x="255" y="124" font-size="13" fill="#2FA45A">identical right triangles ride the slope →</text></g>
+      <g class="step"><text x="498" y="120" font-size="13" fill="#2FA45A">each rise = same<tspan x="498" dy="16">green block = d</tspan></text></g>
+    </svg>
+    <p class="say step">Draw a level dashed line from each post-top to the next post (the textbook's hint!). You get a row of <b>identical right triangles</b>: same base spacing, same slope ⇒ same rise. Each post = previous post + the same rise. <b>Constant slope + equal spacing manufactures equal jumps.</b></p>
+    <div class="step">
+      <p class="q">Post 1 is 2 cm tall and each rise is 1.5 cm. Post 5 is…?</p>
+      <div class="choices" data-correct="8 cm" data-good="2 + 4 × 1.5 = 8 cm (4 rises to get from post 1 to post 5)." data-bad="From post 1 to post 5 is 4 rises: 2 + 4×1.5 = 8 cm.">
+        <button class="choice">7.5 cm</button><button class="choice">8 cm</button><button class="choice">9.5 cm</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 8 · Sequences in Geometry">
+  <div class="eyebrow">Textbook problem 2</div>
+  <h2>Square-Grid Pictures: Three Hidden Sequences</h2>
+  <p class="objective">Goal: extract three sequences from one growing picture and test each.</p>
+  <div class="card">
+    <p class="step">The pictures are 2×1, 2×2, 2×3, 2×4 grids of small squares. Count three things:</p>
+    <table class="step" style="border-collapse:collapse;font-size:1rem;margin:10px 0">
+      <tr style="font-weight:800;color:#857c6e"><td style="padding:4px 14px 4px 0"></td><td>pic 1</td><td>pic 2</td><td>pic 3</td><td>pic 4</td><td>gaps</td><td>verdict</td></tr>
+      <tr class="step"><td><b>Small squares</b></td><td>2</td><td>4</td><td>6</td><td>8</td><td style="color:var(--up)">2, 2, 2</td><td>✓ d=2</td></tr>
+      <tr class="step"><td><b>Large 2×2 squares</b></td><td>0</td><td>1</td><td>2</td><td>3</td><td style="color:var(--up)">1, 1, 1</td><td>✓ d=1</td></tr>
+      <tr class="step"><td><b>Total squares</b></td><td>2</td><td>5</td><td>8</td><td>11</td><td style="color:var(--up)">3, 3, 3</td><td>✓ d=3</td></tr>
+    </table>
+    <p class="say step">One picture, three sequences hiding inside — and all three pass the jump inspection. Notice the flash of insight: <b>✓ + ✓ made another ✓</b> (2 + 1 = 3 per step!).</p>
+    <div class="step">
+      <p class="q">Predict all three counts for picture 5.</p>
+      <div class="choices" data-correct="10, 4, 14" data-good="Each sequence takes one more jump: 8+2, 3+1, 11+3." data-bad="Add one jump to each: 8+2=10, 3+1=4, 11+3=14.">
+        <button class="choice">10, 4, 14</button><button class="choice">10, 5, 15</button><button class="choice">12, 4, 16</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 9 ============ -->
+<section class="slide" data-sec="Section 9 · Relationships Between Terms">
+  <div class="eyebrow">⚖️ Discovery</div>
+  <h2>The Balance Scale</h2>
+  <p class="objective">Goal: discover that (before) + (after) = 2 × middle — no algebra needed.</p>
+  <div class="card">
+    <div class="row center step" style="align-items:center"><span class="chip">8</span><span class="arrowlab"><span class="a">⌒</span>+4</span><span class="chip ins">12</span><span class="arrowlab"><span class="a">⌒</span>+4</span><span class="chip">16</span></div>
+    <div class="step" style="text-align:center;margin:14px 0;font-size:1.2rem;font-weight:800">
+      <span style="color:var(--term)">8 + 16 = 24</span> &nbsp; ⚖️ &nbsp; <span style="color:var(--insight)">2 × 12 = 24</span> &nbsp; <span style="color:var(--up)">— the beam levels!</span>
+    </div>
+    <p class="say step"><b>The why:</b> 16 has exactly as much extra (+4) as 8 is missing (−4). Let 16 give its spare 4 to 8 — now both are 12. Two twelves! <b>Outer neighbours average to the middle.</b></p>
+    <div class="step">
+      <p class="q">Trio: 5, □, 25. Balance the scale — what's the middle?</p>
+      <div class="choices" data-correct="15" data-good="5 + 25 = 30 = 2 × 15." data-bad="5 + 25 = 30, and the middle is half of that: 15.">
+        <button class="choice">10</button><button class="choice">15</button><button class="choice">20</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 9 · Relationships Between Terms">
+  <div class="eyebrow">Pour and level</div>
+  <h2>Three in a Row = Three Middles</h2>
+  <p class="objective">Goal: sum of three consecutive terms = 3 × middle (and in reverse).</p>
+  <div class="card">
+    <div class="bars step" id="pourBars">
+      <div class="level" style="bottom:96px">level = middle (12)</div>
+      <div class="bar" style="height:64px" data-h2="96">8</div>
+      <div class="bar" style="height:96px" data-h2="96">12</div>
+      <div class="bar" style="height:128px" data-h2="96">16</div>
+    </div>
+    <button class="choice step" data-pour="pourBars">⬇ Pour the extra into the gap</button>
+    <p class="say step">The tall bar's extra pours into the short bar's gap: a flat skyline of three 12s. <b>8 + 12 + 16 = 12 + 12 + 12 = 3 × 12 = 36.</b> In reverse: if three consecutive terms add to 30, the bars must level at 10 — the <b>middle term is 30 ÷ 3 = 10</b>.</p>
+    <div class="step">
+      <p class="q">Textbook: the 5th + 6th + 7th terms add to 30. The 6th term is…?</p>
+      <div class="choices" data-correct="10" data-good="The middle of three consecutive terms = sum ÷ 3." data-bad="The 6th is the middle of the three: 30 ÷ 3 = 10.">
+        <button class="choice">10</button><button class="choice">15</button><button class="choice">can't tell</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 9 · Relationships Between Terms">
+  <div class="eyebrow">Any odd number of terms</div>
+  <h2>Five in a Row (and Seven, and Nine…)</h2>
+  <p class="objective">Goal: sum of an odd number of consecutive terms = middle × count.</p>
+  <div class="card">
+    <div class="bars step" id="pourBars5">
+      <div class="level" style="bottom:80px">level = middle (10)</div>
+      <div class="bar" style="height:32px" data-h2="80">4</div>
+      <div class="bar" style="height:56px" data-h2="80">7</div>
+      <div class="bar" style="height:80px" data-h2="80">10</div>
+      <div class="bar" style="height:104px" data-h2="80">13</div>
+      <div class="bar" style="height:128px" data-h2="80">16</div>
+    </div>
+    <button class="choice step" data-pour="pourBars5">⬇ Level the skyline</button>
+    <p class="say step">Partners at equal distance from the middle trade perfectly: 16's extra fills 4's gap, 13's fills 7's. Five flat bars of 10 → <b>sum = 5 × 10 = 50</b>. The same trick works for 7, 9, any odd count: <b>find the middle, multiply — no adding long lists.</b></p>
+    <div class="step">
+      <p class="q">Textbook: the 4th term is 8. Sum of the 7 terms from 1st to 7th?</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">The 4th term is exactly the middle of terms 1–7.</div></details>
+      <div class="choices" data-correct="56" data-good="7 terms × middle 8 = 56." data-bad="Middle of 1st–7th is the 4th: 7 × 8 = 56.">
+        <button class="choice">56</button><button class="choice">64</button><button class="choice">48</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 10 ============ -->
+<section class="slide" data-sec="Section 10 · Symmetry">
+  <div class="eyebrow">🪞 Mirror pairs</div>
+  <h2>Pairs at the Mirror</h2>
+  <p class="objective">Goal: discover 1st+6th = 2nd+5th = 3rd+4th.</p>
+  <div class="card">
+    <svg viewBox="0 0 600 200" width="100%" style="max-width:640px">
+      <line x1="300" y1="15" x2="300" y2="185" stroke="#7B4FC8" stroke-width="3" stroke-dasharray="8 6"/>
+      <g class="baloo" font-size="20" fill="#F08A24">
+        <text x="60" y="160">5</text><text x="155" y="160">10</text><text x="245" y="160">15</text><text x="335" y="160">20</text><text x="425" y="160">25</text><text x="515" y="160">30</text>
+      </g>
+      <g class="step"><path d="M68 140 Q300 -10 522 140" fill="none" stroke="#D84B3F" stroke-width="4"/><text x="300" y="38" text-anchor="middle" fill="#D84B3F" font-size="16">5 + 30 = 35</text></g>
+      <g class="step"><path d="M162 140 Q300 40 432 140" fill="none" stroke="#2E6FD8" stroke-width="4"/><text x="300" y="78" text-anchor="middle" fill="#2E6FD8" font-size="16">10 + 25 = 35</text></g>
+      <g class="step"><path d="M252 140 Q300 95 342 140" fill="none" stroke="#2FA45A" stroke-width="4"/><text x="300" y="112" text-anchor="middle" fill="#2FA45A" font-size="16">15 + 20 = 35</text></g>
+    </svg>
+    <p class="say step">All three pairs sum to <b>35</b>! <b>Why:</b> walk both partners one step toward the mirror — one term grows by d, the other shrinks by d. <b>The sum can't change.</b></p>
+    <div class="step">
+      <p class="q">In an arithmetic sequence, 2nd + 9th = 40. What is 5th + 6th?</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">Compare position sums: 2 + 9 = 11 and 5 + 6 = 11.</div></details>
+      <div class="choices" data-correct="40" data-good="Equal position-sums ⇒ equal term-sums!" data-bad="2+9 = 5+6 = 11, so the term sums match: 40.">
+        <button class="choice">40</button><button class="choice">20</button><button class="choice">can't tell</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Section 10 · Symmetry">
+  <div class="eyebrow">Mirrors at work</div>
+  <h2>Cracking a Problem with Symmetry</h2>
+  <p class="objective">Goal: use pair symmetry on “first four terms sum to 100, 1st term is 10”.</p>
+  <div class="card">
+    <p class="step"><b>Step 1 — pair up:</b> positions (1,4) and (2,3) sit symmetrically. The 100-purse splits evenly: <span style="color:var(--insight);font-weight:800">each pair sums to 50</span>.</p>
+    <p class="step"><b>Step 2 — use the clue</b> (1st term = 10): the 4th term = 50 − 10 = <b>40</b>.</p>
+    <p class="step"><b>Step 3 — journey method:</b> 1 → 4 is 3 jumps covering 30 → d = 10.</p>
+    <div class="row center step" style="align-items:center"><span class="chip ins">10</span><span class="arrowlab"><span class="a">⌒</span>+10</span><span class="chip ins">20</span><span class="arrowlab"><span class="a">⌒</span>+10</span><span class="chip ins">30</span><span class="arrowlab"><span class="a">⌒</span>+10</span><span class="chip ins">40</span></div>
+    <p class="say step">Check: 10+20+30+40 = 100 ✓. <b>Symmetry turns one big fact into two friendly facts.</b></p>
+    <div class="step">
+      <p class="q">Textbook: 7th + 8th terms sum to 50. Sum of the first 14 terms?</p>
+      <details class="hint"><summary>💡 Hint</summary><div class="body">Pair 1&amp;14, 2&amp;13, 3&amp;12 … every pair has position-sum 15 = 7+8, so every pair sums to 50. How many pairs?</div></details>
+      <div class="choices" data-correct="350" data-good="7 mirror pairs × 50 = 350." data-bad="14 terms make 7 pairs, each summing like 7th+8th = 50 → 7 × 50 = 350.">
+        <button class="choice">350</button><button class="choice">700</button><button class="choice">100</button>
+      </div><p class="feedback"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 11 ============ -->
+<section class="slide" data-sec="Section 11 · Summary Mind Map">
+  <div class="eyebrow">🗺️ One map, whole chapter</div>
+  <h2>The Subway Map</h2>
+  <p class="objective">Goal: see the chapter as one connected journey. Tap a stop to revisit it.</p>
+  <div class="card rail">
+    <div class="station step" data-goto="0"><div class="ic">🦓</div><div class="tx"><b>Patterns</b><small>you spot them everywhere</small></div></div>
+    <div class="station step" data-goto="6"><div class="ic">🐢</div><div class="tx"><b>Arithmetic sequence</b><small>equal jumps, every time</small></div></div>
+    <div class="station step" data-goto="8"><div class="ic">🐸</div><div class="tx"><b>Common difference d</b><small>next − previous</small></div></div>
+    <div class="station step" data-goto="14"><div class="ic">🎰</div><div class="tx"><b>Positions &amp; terms</b><small>blue seat, orange sitter, lockstep</small></div></div>
+    <div class="station step" data-goto="15"><div class="ic">⭐</div><div class="tx"><b>term change = position change × d</b><small>the golden rule</small></div></div>
+    <div class="station step" data-goto="17"><div class="ic">🚂</div><div class="tx"><b>Journeys: find any term</b><small>rate per station, then travel</small></div></div>
+    <div class="station step" data-goto="19"><div class="ic">🎈</div><div class="tx"><b>Membership test</b><small>gap ÷ d, remainder 0?</small></div></div>
+    <div class="station step" data-goto="23"><div class="ic">⚖️</div><div class="tx"><b>Relationships</b><small>balance, levelling, mirror pairs</small></div></div>
+    <div class="station step" data-goto="20"><div class="ic">📐</div><div class="tx"><b>Geometry branch</b><small>polygon ladder · perpendicular staircase</small></div></div>
+  </div>
+  <p class="say step">Everything is one story: <b>patterns → equal jumps → predict anything.</b> Say one sentence about each station before tapping it.</p>
+</section>
+
+<!-- ============ SECTION 12: PRACTICE ============ -->
+<section class="slide" data-sec="Section 12 · Practice — Level 1">
+  <div class="eyebrow">Practice · Level 1</div>
+  <h2>Recognition (5 questions)</h2>
+  <p class="objective">Check ALL the gaps. Zero and negative d still count.</p>
+  <div class="card step"><p class="q">1) 5, 10, 15, 20, … arithmetic?</p><div class="ws">workspace — sketch your gap bars here (on paper!)</div>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Measure every gap, not just the first.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Gaps: 5, 5, 5 — all equal → <b>✓ arithmetic, d = 5</b>.</div></details></div>
+  <div class="card step"><p class="q">2) 1, 2, 4, 8, … arithmetic?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Compare the first two gaps.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Gaps: 1, 2, 4 — not equal → <b>✗ not arithmetic</b> (it doubles instead).</div></details></div>
+  <div class="card step"><p class="q">3) 40, 33, 26, 19, … arithmetic?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Downhill is allowed!</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Gaps: −7, −7, −7 → <b>✓ arithmetic, d = −7</b>.</div></details></div>
+  <div class="card step"><p class="q">4) 6, 6, 6, 6, … arithmetic?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">What is each gap, exactly?</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Gaps: 0, 0, 0 — equal → <b>✓ arithmetic, d = 0</b>.</div></details></div>
+  <div class="card step"><p class="q">5) 1, 4, 9, 16, … arithmetic?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">These are the square numbers.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Gaps: 3, 5, 7 — growing → <b>✗ not arithmetic</b>.</div></details></div>
+</section>
+
+<section class="slide" data-sec="Section 12 · Practice — Level 2">
+  <div class="eyebrow">Practice · Level 2</div>
+  <h2>Common Difference (5 questions)</h2>
+  <p class="objective">d is one subtraction, done in the right order: later − earlier.</p>
+  <div class="card step"><p class="q">1) d of 3, 8, 13, …?</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">8 − 3 = <b>5</b>.</div></details></div>
+  <div class="card step"><p class="q">2) d of 20, 14, 8, …?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Later − earlier, even downhill.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">14 − 20 = <b>−6</b>.</div></details></div>
+  <div class="card step"><p class="q">3) d of ½, 1, 1½, …? (the textbook's halves!)</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">1 − ½ = <b>½</b>. Fractions are welcome.</div></details></div>
+  <div class="card step"><p class="q">4) First term 7, d = 4 — write four terms.</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body"><b>7, 11, 15, 19</b> (hop +4 each time).</div></details></div>
+  <div class="card step"><p class="q">5) A sequence contains … 50, 57 … as neighbours. Find d and the term after 57.</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">d = 57 − 50 = <b>7</b>; next term = 57 + 7 = <b>64</b>.</div></details></div>
+</section>
+
+<section class="slide" data-sec="Section 12 · Practice — Level 3">
+  <div class="eyebrow">Practice · Level 3</div>
+  <h2>Missing Terms (textbook box puzzles)</h2>
+  <p class="objective">Anchor on a fully-known gap, count the jumps, divide, walk.</p>
+  <div class="card step"><p class="q">1) 24, □, 42</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">Trip 18 ÷ 2 jumps = 9 → □ = <b>33</b>.</div></details></div>
+  <div class="card step"><p class="q">2) □, 24, 42</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Find d from the known gap (24 → 42) first.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">d = 18; walk back: 24 − 18 = <b>6</b>.</div></details></div>
+  <div class="card step"><p class="q">3) 24, □, □, 42</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">18 ÷ 3 = 6 → <b>30, 36</b>.</div></details></div>
+  <div class="card step"><p class="q">4) 24, □, 42, □</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">24 and 42 are TWO jumps apart here.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">18 ÷ 2 = 9 → boxes are <b>33</b> and 42 + 9 = <b>51</b>.</div></details></div>
+  <div class="card step"><p class="q">5) □, 24, □, 42</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">24 and 42 are two jumps apart again.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">d = 9 → boxes are 24 − 9 = <b>15</b> and 24 + 9 = <b>33</b>.</div></details></div>
+</section>
+
+<section class="slide" data-sec="Section 12 · Practice — Level 4">
+  <div class="eyebrow">Practice · Level 4</div>
+  <h2>Position &amp; Term Problems (textbook)</h2>
+  <p class="objective">Every problem: rate per station, then travel.</p>
+  <div class="card step"><p class="q">1) 25th term of 1, 11, 21, …?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">24 jumps from station 1.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">1 + 24 × 10 = <b>241</b>.</div></details></div>
+  <div class="card step"><p class="q">2) 3rd term 37, 7th term 73 — write the first five terms.</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">4 stations climb 36.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">d = 36 ÷ 4 = 9; back 2 from 37 → 19. <b>19, 28, 37, 46, 55</b>.</div></details></div>
+  <div class="card step"><p class="q">3) 21st term of 100, 95, 90, …?</p>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">100 + 20 × (−5) = <b>0</b>.</div></details></div>
+  <div class="card step"><p class="q">4) 5th term 10, 10th term 5 — find the 15th term.</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">5 stations drop 5 → d = −1.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">From the 5th: 10 + 10 × (−1) = <b>0</b>.</div></details></div>
+  <div class="card step"><p class="q">5) Is 101 a term of 13, 24, 35, …? And 1001?</p>
+    <details class="hint"><summary>💡 Hint</summary><div class="body">Balloon test: divide the climb by 11, check the remainder.</div></details>
+    <details class="sol"><summary>🔓 Solution</summary><div class="body">101: (101−13) ÷ 11 = 88 ÷ 11 = 8 exactly → <b>yes, the 9th term</b>. 1001: 988 ÷ 11 = 89.8… leftover → <b>no</b>.</div></details></div>
+</section>
+
+<!-- ============ SECTION 13 ============ -->
+<section class="slide" data-sec="Section 13 · Challenge Arena">
+  <div class="eyebrow">🏆 Reasoning, not calculation</div>
+  <h2>Challenge Arena</h2>
+  <p class="objective">Five advanced thinking questions. Visual hint first, full reasoning second.</p>
+  <div class="card step"><p class="q">C1 — Pentagon angles (textbook): the five angles of a pentagon form an arithmetic sequence. (i) The middle (3rd) angle? (ii) Can the smallest angle be 36°?</p>
+    <details class="hint"><summary>💡 Visual hint</summary><div class="body">Five levelling bars; a pentagon's angles total 540°.</div></details>
+    <details class="sol"><summary>🔓 Reasoning</summary><div class="body">(i) Middle = 540 ÷ 5 = <b>108°</b>. (ii) If the smallest were 36°, it sits 72 below the middle, so the largest sits 72 above: 108 + 72 = <b>180°</b> — a straight line, not a corner. <b>Impossible.</b></div></details></div>
+  <div class="card step"><p class="q">C2 — The telltale remainder: why does EVERY term of 13, 24, 35, … leave remainder 2 on division by 11?</p>
+    <details class="hint"><summary>💡 Visual hint</summary><div class="body">Picture each term as a stack of 11-blocks plus a little 2-brick on top.</div></details>
+    <details class="sol"><summary>🔓 Reasoning</summary><div class="body">Terms differ by whole 11-blocks; adding 11-blocks never touches the 2-brick. <b>The remainder is frozen.</b></div></details></div>
+  <div class="card step"><p class="q">C3 — One fact, many sequences: the 2nd term is 5. Draw three different sequences that fit. What does EVERY such sequence share?</p>
+    <details class="hint"><summary>💡 Visual hint</summary><div class="body">A seesaw hinged at (position 2, value 5) — the line can tilt any way.</div></details>
+    <details class="sol"><summary>🔓 Reasoning</summary><div class="body">e.g. 4,5,6 · 3,5,7 · 6,5,4. They all share <b>1st + 3rd = 10</b> (= 2 × the middle). One known term pins a point, not a line.</div></details></div>
+  <div class="card step"><p class="q">C4 — Mirror logic (textbook): 11th + 21st terms sum to 80. Find the 16th term — without knowing the sequence!</p>
+    <details class="hint"><summary>💡 Visual hint</summary><div class="body">Where does the mirror between positions 11 and 21 stand? Exactly at 16.</div></details>
+    <details class="sol"><summary>🔓 Reasoning</summary><div class="body">The 16th is the exact middle of the pair, so it's the average: 80 ÷ 2 = <b>40</b>.</div></details></div>
+  <div class="card step"><p class="q">C5 — True or false court: “If a + c = 2b, then a, b, c are consecutive terms of some arithmetic sequence.”</p>
+    <details class="hint"><summary>💡 Visual hint</summary><div class="body">Build the balance scale backwards.</div></details>
+    <details class="sol"><summary>🔓 Reasoning</summary><div class="body"><b>TRUE.</b> Set d = b − a; then a + c = 2b forces c = b + d automatically. The balance condition IS the arithmetic condition.</div></details></div>
+</section>
+
+<section class="slide" data-sec="🎉 Finish">
+  <div class="eyebrow">🎉 You made it</div>
+  <h2>The Confidence Ladder</h2>
+  <p class="objective">Tap each step you feel sure about. Light the whole ladder!</p>
+  <div id="ladder">
+    <div class="ladderstep step"><span class="tick">✓</span> I can spot a pattern and predict what comes next</div>
+    <div class="ladderstep step"><span class="tick">✓</span> I can test if a sequence is arithmetic (check ALL gaps)</div>
+    <div class="ladderstep step"><span class="tick">✓</span> I can find d — even negative, zero, or a fraction</div>
+    <div class="ladderstep step"><span class="tick">✓</span> I can fill missing boxes: count jumps, divide, walk</div>
+    <div class="ladderstep step"><span class="tick">✓</span> I can ride the train to ANY term from two known flags</div>
+    <div class="ladderstep step"><span class="tick">✓</span> I can use balance, levelling, and mirror pairs</div>
+  </div>
+  <p class="say step" id="ladderMsg">Look back at the staircase game — you predicted Step 4. Now you can predict the 100th step of ANY arithmetic sequence. <b>That's real growth, +1 confidence at a time.</b></p>
+  <div class="step" style="text-align:center;margin-top:10px"><span class="badge">Your toolbox: 🐸 equal jumps · 🚂 journey method · 🪞 mirror pairs</span></div>
+</section>
+
+</main>
+
+<footer>
+  <button class="nav" id="prevB">← Back</button>
+  <button class="nav" id="stepB">Tap to continue ✨</button>
+  <button class="nav" id="nextB">Next →</button>
+  <span id="counter"></span>
+</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const stepB=document.getElementById('stepB'),prevB=document.getElementById('prevB'),
+nextB=document.getElementById('nextB'),counter=document.getElementById('counter'),
+progress=document.getElementById('progress'),secLabel=document.getElementById('secLabel'),
+jump=document.getElementById('jump');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.body.classList.add('no-motion');
+
+slides.forEach((s,i)=>{
+  const o=document.createElement('option');o.value=i;
+  o.textContent=(i+1)+'. '+(s.querySelector('h2')?.textContent||'Slide');
+  jump.appendChild(o);
+});
+jump.onchange=()=>go(+jump.value);
+
+function pendingSteps(s){return [...s.querySelectorAll('.step:not(.shown)')];}
+function updateStepBtn(){
+  const left=pendingSteps(slides[cur]).length;
+  if(left>0){stepB.classList.remove('exhausted');stepB.textContent='Tap to continue ✨ ('+left+')';}
+  else{stepB.classList.add('exhausted');stepB.textContent='✓ Slide complete — Next →';}
+}
+function revealNext(){
+  const p=pendingSteps(slides[cur]);
+  if(p.length){p[0].classList.add('shown');updateStepBtn();}
+  else next();
+}
+function go(i){
+  if(i<0||i>=slides.length)return;
+  slides[cur].classList.remove('active');
+  cur=i;
+  const s=slides[cur];
+  s.classList.add('active');s.scrollTop=0;
+  // reveal first step automatically
+  const p=pendingSteps(s); if(p.length) p[0].classList.add('shown');
+  counter.textContent=(cur+1)+' / '+slides.length;
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+  secLabel.textContent=s.dataset.sec||'';
+  jump.value=cur;
+  updateStepBtn();
+}
+function next(){go(cur+1)} function prev(){go(cur-1)}
+stepB.onclick=revealNext; nextB.onclick=next; prevB.onclick=prev;
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT')return;
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();revealNext();}
+  if(e.key==='ArrowLeft')prev();
+  if(e.key==='Enter')next();
+});
+
+// prediction choice groups
+document.querySelectorAll('.choices').forEach(g=>{
+  const fb=g.parentElement.querySelector('.feedback');
+  g.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(g.dataset.done)return; g.dataset.done='1';
+      const ok=btn.textContent.trim()===g.dataset.correct;
+      g.querySelectorAll('.choice').forEach(b=>{
+        b.disabled=true;
+        if(b.textContent.trim()===g.dataset.correct)b.classList.add('correct');
+      });
+      if(!ok)btn.classList.add('wrong');
+      if(fb){fb.textContent=ok?g.dataset.good:g.dataset.bad;fb.className='feedback '+(ok?'good':'info');}
+      if(ok)confetti(btn);
+      // auto-reveal the rest of this slide's steps shortly after
+      setTimeout(()=>{pendingSteps(slides[cur]).slice(0,1).forEach(el=>el.classList.add('shown'));updateStepBtn();},700);
+    });
+  });
+});
+
+// pour-to-level buttons
+document.querySelectorAll('[data-pour]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const wrap=document.getElementById(btn.dataset.pour);
+    wrap.querySelectorAll('.bar').forEach(b=>{b.style.height=b.dataset.h2+'px';b.textContent='';});
+    setTimeout(()=>wrap.querySelectorAll('.bar').forEach(b=>b.textContent=parseInt(b.dataset.h2)/8),850);
+    btn.disabled=true;btn.textContent='✓ Levelled!';
+  });
+});
+
+// mind map navigation
+document.querySelectorAll('.station').forEach(st=>st.addEventListener('click',()=>go(+st.dataset.goto)));
+
+// confidence ladder
+const ladder=document.getElementById('ladder');
+if(ladder){ladder.querySelectorAll('.ladderstep').forEach(ls=>ls.addEventListener('click',()=>{
+  ls.classList.toggle('done');
+  if([...ladder.children].every(c=>c.classList.contains('done'))){
+    for(let i=0;i<40;i++)confetti(ladder);
+    document.getElementById('ladderMsg').insertAdjacentHTML('beforeend',' <b style="color:var(--up)">🎆 Full ladder — chapter mastered!</b>');
+  }
+}));}
+
+function confetti(near){
+  const r=near.getBoundingClientRect(),colors=['#F08A24','#2E6FD8','#2FA45A','#7B4FC8','#E8B931'];
+  for(let i=0;i<14;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.left=(r.left+r.width/2+(Math.random()*120-60))+'px';
+    c.style.top=(r.top-10)+'px';
+    c.style.background=colors[i%colors.length];
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1500);
+  }
+}
+go(0);
+</script>
+</body>
+</html>
