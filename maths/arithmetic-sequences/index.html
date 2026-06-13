@@ -26,7 +26,12 @@ body{
   display:flex; flex-direction:column; overflow:hidden;
 }
 h1,h2,h3,.display{font-family:'Baloo 2',cursive}
-
+// new
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
 /* ---------- top bar ---------- */
 header{
   display:flex; align-items:center; gap:12px; padding:10px 16px;
@@ -87,13 +92,13 @@ main{flex:1;position:relative;overflow:hidden}
 .dot.red{background:var(--down)} .dot.new{background:var(--gold)}
 
 /* gap bars */
-.gapbars{display:flex;gap:14px;align-items:flex-end;height:120px;margin:10px 0}
-.gapbar{width:42px;border-radius:8px 8px 4px 4px;background:var(--up);color:#fff;display:flex;align-items:flex-start;justify-content:center;font-weight:800;padding-top:4px}
+.gapbars{display:flex;gap:clamp(6px, 2vw, 14px);align-items:flex-end;height:120px;margin:10px 0}
+.gapbar{width:clamp(28px, 8vw, 42px);border-radius:8px 8px 4px 4px;background:var(--up);color:#fff;display:flex;align-items:flex-start;justify-content:center;font-weight:800;padding-top:4px}
 .gapbar.bad{background:var(--down)}
 
 /* bar chart / levelling */
-.bars{display:flex;gap:18px;align-items:flex-end;height:190px;position:relative;margin:14px 4px}
-.bar{width:54px;background:var(--term);border-radius:10px 10px 4px 4px;position:relative;display:flex;justify-content:center;color:#fff;font-weight:800;padding-top:6px;transition:height .8s}
+.bars{display:flex;gap:clamp(6px, 2vw, 18px);align-items:flex-end;height:190px;position:relative;margin:14px 4px}
+.bar{width:clamp(30px, 10vw, 54px);background:var(--term);border-radius:10px 10px 4px 4px;position:relative;display:flex;justify-content:center;color:#fff;font-weight:800;padding-top:6px;transition:height .8s}
 .level{position:absolute;left:-8px;right:-8px;border-top:3px dashed var(--insight);font-size:.75rem;color:var(--insight);font-weight:800}
 
 /* interactive predictions */
@@ -163,8 +168,15 @@ button.nav{font-family:'Baloo 2';font-weight:800;font-size:1rem;border:none;bord
 }
 @media (max-width:640px){
   .chip{min-width:44px;height:44px;font-size:1.05rem}
-  header h1{font-size:.92rem}
-  .slide{padding-bottom:110px}
+   header{gap:8px;padding:8px 10px}
+   header h1{font-size:.92rem}
+   header .sec{display:none}
+   select#jump{max-width:40vw;font-size:.75rem}
+   footer{flex-wrap:wrap;justify-content:center}
+   button.nav{padding:10px 12px;font-size:.9rem;flex:1 1 auto}
+   #stepB{width:100%;order:-1;margin-bottom:6px}
+   #counter{margin-left:0}
+   .slide{padding-bottom:140px}
 }
 </style>
 </head>
